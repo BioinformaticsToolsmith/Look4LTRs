@@ -62,7 +62,9 @@ Look4LTRs is activated from the command line. The following table describes the 
 | -h/--help | Prints a help message and stops execution of the program | No |
 
 An example for predicting on a genome is this:
-./look4ltrs --fasta /###/###/Sorghum_bicolor/Fasta/ --out /###/###/outputdir/ --pa 8
+
+**./look4ltrs --fasta /###/###/Sorghum_bicolor/Fasta/ --out /###/###/outputdir/ --pa 8**
 
 An example for predicting on multiple genomes from different directories is this:
-./look4ltrs --fasta /###/###/Phaseolus_vulgaris/Fasta/ /###/###/Vigna_radiata/Fasta/ /###/###/Vigna_angularis/Fasta/ --out /###/###/outputdir/ --pa 8
+
+**./look4ltrs --fasta /###/###/Phaseolus_vulgaris/Fasta/ /###/###/Vigna_radiata/Fasta/ /###/###/Vigna_angularis/Fasta/ --out /###/###/outputdir/ --pa 8**
