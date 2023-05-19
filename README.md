@@ -14,6 +14,8 @@ cd bin
 cmake ..
 (Or if you would like to specify a different compiler that meets the requirement)
 cmake .. -DCMAKE_CXX_COMPILER=your_compiler_name_for_example_g++-7
+(Or if this fails, try using this to set a different compiler. Replace the paths with your own.)
+cmake .. -DCMAKE_CXX_COMPILER=$HOME/C++/GCC/bin/g++ -DCMAKE_C_COMPILER=$HOME/C++/GCC/bin/gcc -DCMAKE_PREFIX_PATH=$HOME/C++/GCC
 make
 ```
 
