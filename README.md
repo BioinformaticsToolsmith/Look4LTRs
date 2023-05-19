@@ -1,8 +1,21 @@
 # Look4LTRs
-Long Terminal Repeat Retrotransposon detection tool, de novo, capable of finding recently nested LTR RTs.
+Long Terminal Repeat Retrotransposon detection tool capable of finding recently nested LTR RTs de novo.
 
+## Requirements
 
+GNU g++ 11.1.0 or later
 
+## How to Compile
+
+```
+mkdir bin
+cd bin
+(If your default compiler meets the version requiremet) 
+cmake ..
+(Or if you would like to specify a different compiler that meets the requirement)
+cmake .. -DCMAKE_CXX_COMPILER=your_compiler_name_for_example_g++-7
+make
+```
 
 ## INPUT
 Look4LTRs accepts FASTA format files, as well as multi-FASTA format. It is suggested that, at minimum, an entire genome is given to Look4LTRs, to enhance its self-supervised capabilities. Multiple genomes may be passed into Look4LTRs, but take caution with the memory requirements, and lower the number of threads (if any) if too much memory is being utilized. Additionally, Look4LTRs accepts training genomes that will not be predicted upon but are used to enhance the prediction of other genomes.
@@ -35,8 +48,8 @@ RTR stands for RetroTransposon Relationship format file. It is Look4LTRs specifi
   9. *RC* is a boolean for Reverse Complement. If the LTR RT is reverse complemented, this is 1. If not, this is 0. If a solo LTR, this is NA.
   10. *PPTStart* is the start of the poly purine tract, or NA if a solo LTR.
   11. *PPTEnd* is the end of the poly purine tract, or NA if a solo LTR.
-  12. *TSDStart* is the start of the target site duplication.
-  13. *TSDEnd* is the end of the target site duplication.
+  12. *TSDStart* is the start of the target site duplication. This is NA if a TSD could not be found.
+  13. *TSDEnd* is the end of the target site duplication. This is NA if a TSD could not be found.
   14. *CaseType* reflects which matching case this LTR RT came from; for example, a recently nested LTR RT would be marked with RecentlyNested.
   15. *GraphGroup* Look4LTRs utilizes a graph when matching LTRs. Each graph represents nearby elements of the same family. This column is an ID to the graph the LTR RT/solo LTR belongs to.
   16. *LTRIdentity* is the identity between the two LTRs of an LTR RT, NA if a solo LTR.
@@ -57,14 +70,23 @@ Look4LTRs is activated from the command line. The following table describes the 
 |-----------------|-----------------|-----------------|
 | -f/--fasta | Fasta file directory for training and predicting. If you wish to train multiple genomes, you can pass multiple directories here. | Yes |
 | -o/--output | Output directory. | Yes |
-| -t/--train | Fasta file directory for only training.
-| -p/--pa | Number of threads to use. If not given, defaults to 1 | No |
+| -t/--train | Fasta file directory for training only. Can be given a variable number of arguments.
+| -p/--parallel | Number of threads to use. If not given, defaults to 1 | No |
 | -h/--help | Prints a help message and stops execution of the program | No |
 
-An example for predicting on a genome is this:
+## Usage
 
-**./look4ltrs --fasta /###/###/Sorghum_bicolor/Fasta/ --out /###/###/outputdir/ --pa 8**
+1. Predicting on a genome:
+    ```bash
+    ./look4ltrs --fasta /###/###/Sorghum_bicolor/Fasta/ --out /###/###/outputdir/ --parallel 8
 
-An example for predicting on multiple genomes from different directories is this:
+2. Predicting on multiple genomes from different directories is this:
+    ```bash
+    ./look4ltrs --fasta /###/###/Phaseolus_vulgaris/Fasta/ /###/###/Vigna_radiata/Fasta/ /###/###/Vigna_angularis/Fasta/ --out /###/###/outputdir/ --parallel 8
 
-**./look4ltrs --fasta /###/###/Phaseolus_vulgaris/Fasta/ /###/###/Vigna_radiata/Fasta/ /###/###/Vigna_angularis/Fasta/ --out /###/###/outputdir/ --pa 8**
+3. Training on a genome and predicting on another:
+    ```bash
+    ./look4ltrs --fasta /###/###/Phaseolus_vulgaris/Fasta/ --train /###/###/Vigna_radiata/Fasta --out /###/###/outputdir/ --parallel 8
+
+## License
+Academic use: The software is provided as-is under the GNU GPLv3. Any restrictions to use for-profit or non-academics: License needed.
