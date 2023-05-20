@@ -7,7 +7,7 @@ The script directory holds useful scripts for studying the results of Look4LTRs.
 
 ## Requirements
 
-GNU g++ 11.1.0 or later
+GNU g++ 11.1.0
 
 ## How to Compile
 
