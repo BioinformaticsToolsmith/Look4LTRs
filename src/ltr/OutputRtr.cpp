@@ -80,12 +80,12 @@ std::string OutputRtr::formatRt(std::string& chrom, RT* rt, std::unordered_map<R
         s << "NA" << "\t" << "NA" << "\t" << "NA" << "\t" << "NA" << "\t" << "NA" << "\t";
     }
     s << rt->getCaseType() << "\t" << rt->getGraphGroup();
-    // if (rt->hasRightLTR()) {
-    //     s << "\t" << rt->getIdentityScore();
-    // }
-    // else {
-    //     s << "\t" << "NA";
-    // }
+    if (rt->hasRightLTR()) {
+        s << "\t" << rt->getIdentityScore();
+    }
+    else {
+        s << "\t" << "NA";
+    }
 
     return s.str();
 }
