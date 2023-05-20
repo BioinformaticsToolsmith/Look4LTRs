@@ -95,8 +95,14 @@ Look4LTRs is activated from the command line. The following table describes the 
     ./look4ltrs --fasta /###/###/Phaseolus_vulgaris/Fasta/ --train /###/###/Vigna_radiata/Fasta --out /###/###/outputdir/ --parallel 8
     
 ## Scripts
-findRecentNest.py will find the IDs of recently nested LTR RTs and print out to terminal a tree of these nests.
-findSameGraphNest.py will find the IDs of LTR RTs nested into a same-graph LTR RT (same family possibly). Prints to a tree like findRecentNest.py.
+
+| Script | Description | Usage | Example |
+|-----------------|-----------------|-----------------|-----------------|
+| findRecentNest.py | will find the IDs of recently nested LTR RTs and print out to terminal a tree of these nests. | Pass in a path to a directory of RTR files or a path to a single RTR file. | python3.10 findRecentNest.py /###/###/outputdir/Rtr/Glycine_max_chr1.rtr |
+| findSameGraphNest.p | will find the IDs of LTR RTs nested into a same-graph LTR RT (same family possibly). Prints to a tree like findRecentNest.py. | Pass in a path to a directory of RTR files or a path to a single RTR file. | python3.10 findSameGraphNest.py /###/###/outputdir/Rtr/Glycine_max_chr1.rtr |
+| findRT.py | will return the line belonging to an LTR RT from an RTR file given its ID. Use this in conjunction with the above scripts instead of searching by hand. | Pass in a path to a single RTR file. | python3.10 findRT.py /###/###/outputdir/Rtr/Glycine_max_chr1.rtr |
+
+findSameGraphNest.py 
 findRT.py will return the line belonging to an LTR RT from an RTR file given its ID. Use this in conjunction with the above scripts instead of searching by hand.
 
 ## License
