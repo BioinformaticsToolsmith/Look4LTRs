@@ -14,7 +14,7 @@ GNU g++ 11.1.0
 ```
 mkdir bin
 cd bin
-(If your default compiler meets the version requiremet) 
+(If your default compiler meets the version requirement) 
 cmake ..
 (Or if you would like to specify a different compiler that meets the requirement)
 cmake .. -DCMAKE_CXX_COMPILER=your_compiler_name_for_example_g++-7
