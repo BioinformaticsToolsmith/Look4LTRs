@@ -1,6 +1,10 @@
 # Look4LTRs
 Long Terminal Repeat Retrotransposon detection tool capable of finding recently nested LTR RTs de novo.
 
+The src directory holds the source code.
+The CMakeLists is the cmake file.
+The script directory holds useful scripts for studying the results of Look4LTRs. These scripts were made with Python 3.10.
+
 ## Requirements
 
 GNU g++ 11.1.0 or later
@@ -89,6 +93,11 @@ Look4LTRs is activated from the command line. The following table describes the 
 3. Training on a genome and predicting on another:
     ```bash
     ./look4ltrs --fasta /###/###/Phaseolus_vulgaris/Fasta/ --train /###/###/Vigna_radiata/Fasta --out /###/###/outputdir/ --parallel 8
+    
+## Scripts
+findRecentNest.py will find the IDs of recently nested LTR RTs and print out to terminal a tree of these nests.
+findSameGraphNest.py will find the IDs of LTR RTs nested into a same-graph LTR RT (same family possibly). Prints to a tree like findRecentNest.py.
+findRT.py will return the line belonging to an LTR RT from an RTR file given its ID. Use this in conjunction with the above scripts instead of searching by hand.
 
 ## License
 Academic use: The software is provided as-is under the GNU GPLv3. Any restrictions to use for-profit or non-academics: License needed.
