@@ -98,8 +98,8 @@ Look4LTRs is activated from the command line. The following table describes the 
 
 | Script | Description | Usage | Example |
 |-----------------|-----------------|-----------------|-----------------|
-| findRecentNest.py | will find the IDs of recently nested LTR RTs and print out to terminal a tree of these nests. | Pass in a path to a directory of RTR files or a path to a single RTR file. | python3.10 findRecentNest.py /###/###/outputdir/Rtr/Glycine_max_chr1.rtr |
-| findSameGraphNest.p | will find the IDs of LTR RTs nested into a same-graph LTR RT (same family possibly). Prints to a tree like findRecentNest.py. | Pass in a path to a directory of RTR files or a path to a single RTR file. | python3.10 findSameGraphNest.py /###/###/outputdir/Rtr/Glycine_max_chr1.rtr |
+| findRecentNest.py | will find the IDs of recently nested LTR RTs and print out to terminal a tree of these nests. | Pass in a path to a directory of RTR files or a path to a single RTR file. If given a directory, each file, before the extension, must end with \_chr#, where # is the chromosome identifier. | python3.10 findRecentNest.py /###/###/outputdir/Rtr/Glycine_max_chr1.rtr |
+| findSameGraphNest.p | will find the IDs of LTR RTs nested into a same-graph LTR RT (same family possibly). Prints to a tree like findRecentNest.py. | Pass in a path to a directory of RTR files or a path to a single RTR file. If given a directory, each file, before the extension, must end with \_chr#, where # is the chromosome identifier. | python3.10 findSameGraphNest.py /###/###/outputdir/Rtr/Glycine_max_chr1.rtr |
 | findRT.py | will return the line belonging to an LTR RT from an RTR file given its ID. Use this in conjunction with the above scripts instead of searching by hand. | Pass in a path to a single RTR file. | python3.10 findRT.py /###/###/outputdir/Rtr/Glycine_max_chr1.rtr |
 
 findSameGraphNest.py 
