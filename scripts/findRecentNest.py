@@ -7,7 +7,7 @@ from anytree import Node, RenderTree
 
 if len(sys.argv) != 2:
     print("Usage: findNested.py <path>")
-    print("Given a directory or path to a file, find the recently nested elements and print them out.")
+    print("Given a directory or path to an RTR file, find the recently nested elements and print them out.")
     print("Argument One: Path to a directory or file")
     sys.exit(1)
 
