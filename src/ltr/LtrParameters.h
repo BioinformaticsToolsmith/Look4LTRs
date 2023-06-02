@@ -133,6 +133,8 @@ public:
 
 	// Min size of TSD
 	static const int MIN_TSD_SIZE = 4;
+
+	static constexpr double MAX_N_RATIO = 0.25;
 };
 
 #endif /* SRC_LTR_LTRPARAMETERS_H_ */

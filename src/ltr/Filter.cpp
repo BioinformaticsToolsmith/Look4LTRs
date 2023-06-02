@@ -33,6 +33,7 @@ void Filter::apply() {
     // Check to see if rtVec has any RTs to filter
     if (rtVec.size() > 0) {
         filterLength();
+        filterN();
         filterLengthRatio();
         // filterExtendLength();
         filterPPT();
@@ -161,6 +162,42 @@ void Filter::filterLength() {
     rtVec = r;
 }
 
+void Filter::filterN() {
+    std::vector<RT* > r; // vector to hold the RTs that pass the filter
+    // int nCount = 0;
+    for (auto &rt : rtVec) {
+        bool leftLtrPass = false;
+        bool rightLtrPass = false;
+
+        std::string leftLtrSeq = seq->substr(rt->getLeftLTR()->getStart(), rt->getLeftLTR()->getSize());
+        if (std::count(leftLtrSeq.begin(), leftLtrSeq.end(), 'N') / double(rt->getLeftLTR()->getSize()) <= LtrParameters::MAX_N_RATIO) {
+            leftLtrPass = true;
+        }
+
+        if (rt->hasRightLTR()) {
+            std::string rightLtrSeq = seq->substr(rt->getRightLTR()->getStart(), rt->getRightLTR()->getSize());
+            if (std::count(rightLtrSeq.begin(), rightLtrSeq.end(), 'N') / double(rt->getRightLTR()->getSize()) <= LtrParameters::MAX_N_RATIO) {
+                rightLtrPass = true;
+            }
+        }
+        else {
+            rightLtrPass = true;
+        }
+
+        if (leftLtrPass && rightLtrPass) {
+            r.push_back(rt);
+        }
+        else {
+            // nCount++;
+            removeNests(rt);
+            delete rt;
+            rt = nullptr;
+        }
+    }
+    // std::cout << "Removed " << nCount << " RTs due to N ratio." << std::endl;
+    rtVec = r;
+}
+
 void Filter::filterIdentity() {
     std::vector<RT* > r; // vector to hold the RTs that pass the filter
     for (auto &rt : rtVec) {
@@ -181,46 +218,104 @@ void Filter::filterIdentity() {
     rtVec = r;
 }
 
+// void Filter::filterLengthRatio() {
+//     std::vector<RT* > r; // vector to hold the RTs that pass the filter
+//     for (auto &rt : rtVec) {
+//         if (rt->hasRightLTR()) {
+//             double l1 = rt->getLeftLTR()->getSize();
+//             double l2 = rt->getRightLTR()->getSize();
+//             double ratio = l1 < l2 ? l1 / l2 : l2 / l1;
+//             if (ratio >= LtrParameters::MIN_LENGTH_RATIO) {
+//                 r.push_back(rt);
+//             }
+//             else {
+//                 int leftStart = rt->getLeftLTR()->getStart();
+//                 int leftEnd = rt->getLeftLTR()->getEnd();
+//                 int rightStart = rt->getRightLTR()->getStart();
+//                 int rightEnd = rt->getRightLTR()->getEnd();
+
+//                 std::string leftLtrSeq = seq->substr(leftStart, leftEnd - leftStart);
+//                 std::string rightLtrSeq = seq->substr(rightStart, rightEnd - rightStart);
+//                 LocalAlignment la(leftLtrSeq, rightLtrSeq, 2, -3, -5, -2);
+//                 int length = la.getLength();
+//                 double similarity = la.getSimilarity();
+
+//                 if (length >= LtrParameters::MIN_LTR && similarity >= LtrParameters::MIN_IDENTITY) {
+//                     int newLeftStart, newLeftEnd, newRightStart, newRightEnd;
+//                     std::tie(newLeftStart, newLeftEnd) = la.getAlignLoc1();
+//                     std::tie(newRightStart, newRightEnd) = la.getAlignLoc2();
+
+
+//                     rt->getLeftLTR()->setStart(leftStart + newLeftStart);
+//                     rt->getLeftLTR()->setEnd(leftStart + newLeftEnd);
+//                     rt->getRightLTR()->setStart(rightStart + newRightStart);
+//                     rt->getRightLTR()->setEnd(rightStart + newRightEnd);
+//                     r.push_back(rt);
+
+//                 }
+//                 else {
+//                     removeNests(rt);
+//                     delete rt;
+//                     rt = nullptr;
+//                 }
+//             }
+//         }
+//         else {
+//             r.push_back(rt);
+//         }
+//     }
+
+//     rtVec = r;
+// }
+
 void Filter::filterLengthRatio() {
     std::vector<RT* > r; // vector to hold the RTs that pass the filter
     for (auto &rt : rtVec) {
         if (rt->hasRightLTR()) {
-            double l1 = rt->getLeftLTR()->getSize();
-            double l2 = rt->getRightLTR()->getSize();
-            double ratio = l1 < l2 ? l1 / l2 : l2 / l1;
-            if (ratio >= LtrParameters::MIN_LENGTH_RATIO) {
+            int leftStart = rt->getLeftLTR()->getStart();
+            int leftEnd = rt->getLeftLTR()->getEnd();
+            int rightStart = rt->getRightLTR()->getStart();
+            int rightEnd = rt->getRightLTR()->getEnd();
+
+            std::string leftLtrSeq = seq->substr(leftStart, leftEnd - leftStart);
+            std::string rightLtrSeq = seq->substr(rightStart, rightEnd - rightStart);
+            LocalAlignment la(leftLtrSeq, rightLtrSeq, 2, -3, -5, -2);
+            int length = la.getLength();
+            double similarity = la.getSimilarity();
+
+            int newLeftStart, newLeftEnd, newRightStart, newRightEnd;
+
+
+            bool pass = false;
+            if (length >= LtrParameters::MIN_LTR && similarity >= LtrParameters::MIN_IDENTITY) {
+                std::tie(newLeftStart, newLeftEnd) = la.getAlignLoc1();
+                std::tie(newRightStart, newRightEnd) = la.getAlignLoc2();
+                newLeftStart = newLeftStart + leftStart;
+                newLeftEnd = newLeftEnd + leftStart;
+                newRightStart = newRightStart + rightStart;
+                newRightEnd = newRightEnd + rightStart;
+
+                leftLtrSeq = seq->substr(newLeftStart, newLeftEnd - newLeftStart);
+                rightLtrSeq = seq->substr(newRightStart, newRightEnd - newRightStart);
+
+                // Count N's
+                if (std::count(leftLtrSeq.begin(), leftLtrSeq.end(), 'N') / double(leftLtrSeq.size()) <= LtrParameters::MAX_N_RATIO &&
+                    std::count(rightLtrSeq.begin(), rightLtrSeq.end(), 'N') / double(rightLtrSeq.size()) <= LtrParameters::MAX_N_RATIO) {
+                    pass = true;
+                }
+
+            }
+            if (pass) {
+                rt->getLeftLTR()->setStart(newLeftStart);
+                rt->getLeftLTR()->setEnd(newLeftEnd);
+                rt->getRightLTR()->setStart(newRightStart);
+                rt->getRightLTR()->setEnd(newRightEnd);
                 r.push_back(rt);
             }
             else {
-                int leftStart = rt->getLeftLTR()->getStart();
-                int leftEnd = rt->getLeftLTR()->getEnd();
-                int rightStart = rt->getRightLTR()->getStart();
-                int rightEnd = rt->getRightLTR()->getEnd();
-
-                std::string leftLtrSeq = seq->substr(leftStart, leftEnd - leftStart);
-                std::string rightLtrSeq = seq->substr(rightStart, rightEnd - rightStart);
-                LocalAlignment la(leftLtrSeq, rightLtrSeq, 2, -3, -5, -2);
-                int length = la.getLength();
-                double similarity = la.getSimilarity();
-
-                if (length >= LtrParameters::MIN_LTR && similarity >= LtrParameters::MIN_IDENTITY) {
-                    int newLeftStart, newLeftEnd, newRightStart, newRightEnd;
-                    std::tie(newLeftStart, newLeftEnd) = la.getAlignLoc1();
-                    std::tie(newRightStart, newRightEnd) = la.getAlignLoc2();
-
-
-                    rt->getLeftLTR()->setStart(leftStart + newLeftStart);
-                    rt->getLeftLTR()->setEnd(leftStart + newLeftEnd);
-                    rt->getRightLTR()->setStart(rightStart + newRightStart);
-                    rt->getRightLTR()->setEnd(rightStart + newRightEnd);
-                    r.push_back(rt);
-
-                }
-                else {
-                    removeNests(rt);
-                    delete rt;
-                    rt = nullptr;
-                }
+                removeNests(rt);
+                delete rt;
+                rt = nullptr;
             }
         }
         else {

@@ -56,6 +56,9 @@ private:
     // Filters RTs by the minimum and maximum lengths for the LTRs, interiors, and RT LTRs.
     void filterLength();
 
+    // Filter RTs that have a large portion of N's in their sequence
+    void filterN();
+
     // void filterLengthRatio();
 
     void filterLengthRatio();

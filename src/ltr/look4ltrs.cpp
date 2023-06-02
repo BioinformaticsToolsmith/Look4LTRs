@@ -310,9 +310,9 @@ int main(int argc, char*argv[]) {
             mp.buildElements(chrom.second);
 
             // Writing elements out only if they are to be predicted on later
-            if (predSet.count(fastaPath) == 1) {
-                mp.writeElements(chromOut);
-            }
+            // if (predSet.count(fastaPath) == 1) {
+            //     mp.writeElements(chromOut);
+            // }
             
             // Clearing the element vector; We will read this back in later if needed
             // mp.clearElementVec();
@@ -380,7 +380,7 @@ int main(int argc, char*argv[]) {
             // Reading the elements back in from the file
             // mp.readElements();
             // Remove the element file
-            mp.removeElements();
+            // mp.removeElements();
             // Matching the elements
             mp.matchElements(*icStandard, *icRecent, chrom.second);
 
