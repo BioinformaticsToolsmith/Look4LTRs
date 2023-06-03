@@ -218,126 +218,14 @@ void Filter::filterIdentity() {
     rtVec = r;
 }
 
-// void Filter::filterLengthRatio() {
-//     std::vector<RT* > r; // vector to hold the RTs that pass the filter
-//     for (auto &rt : rtVec) {
-//         if (rt->hasRightLTR()) {
-//             double l1 = rt->getLeftLTR()->getSize();
-//             double l2 = rt->getRightLTR()->getSize();
-//             double ratio = l1 < l2 ? l1 / l2 : l2 / l1;
-//             if (ratio >= LtrParameters::MIN_LENGTH_RATIO) {
-//                 r.push_back(rt);
-//             }
-//             else {
-//                 int leftStart = rt->getLeftLTR()->getStart();
-//                 int leftEnd = rt->getLeftLTR()->getEnd();
-//                 int rightStart = rt->getRightLTR()->getStart();
-//                 int rightEnd = rt->getRightLTR()->getEnd();
-
-//                 std::string leftLtrSeq = seq->substr(leftStart, leftEnd - leftStart);
-//                 std::string rightLtrSeq = seq->substr(rightStart, rightEnd - rightStart);
-//                 LocalAlignment la(leftLtrSeq, rightLtrSeq, 2, -3, -5, -2);
-//                 int length = la.getLength();
-//                 double similarity = la.getSimilarity();
-
-//                 if (length >= LtrParameters::MIN_LTR && similarity >= LtrParameters::MIN_IDENTITY) {
-//                     int newLeftStart, newLeftEnd, newRightStart, newRightEnd;
-//                     std::tie(newLeftStart, newLeftEnd) = la.getAlignLoc1();
-//                     std::tie(newRightStart, newRightEnd) = la.getAlignLoc2();
-
-
-//                     rt->getLeftLTR()->setStart(leftStart + newLeftStart);
-//                     rt->getLeftLTR()->setEnd(leftStart + newLeftEnd);
-//                     rt->getRightLTR()->setStart(rightStart + newRightStart);
-//                     rt->getRightLTR()->setEnd(rightStart + newRightEnd);
-//                     r.push_back(rt);
-
-//                 }
-//                 else {
-//                     removeNests(rt);
-//                     delete rt;
-//                     rt = nullptr;
-//                 }
-//             }
-//         }
-//         else {
-//             r.push_back(rt);
-//         }
-//     }
-
-//     rtVec = r;
-// }
-
 void Filter::filterLengthRatio() {
     std::vector<RT* > r; // vector to hold the RTs that pass the filter
-    for (auto &rt : rtVec) {
-        if (rt->hasRightLTR()) {
-            int leftStart = rt->getLeftLTR()->getStart();
-            int leftEnd = rt->getLeftLTR()->getEnd();
-            int rightStart = rt->getRightLTR()->getStart();
-            int rightEnd = rt->getRightLTR()->getEnd();
-
-            std::string leftLtrSeq = seq->substr(leftStart, leftEnd - leftStart);
-            std::string rightLtrSeq = seq->substr(rightStart, rightEnd - rightStart);
-            LocalAlignment la(leftLtrSeq, rightLtrSeq, 2, -3, -5, -2);
-            int length = la.getLength();
-            double similarity = la.getSimilarity();
-
-            int newLeftStart, newLeftEnd, newRightStart, newRightEnd;
-
-
-            bool pass = false;
-            if (length >= LtrParameters::MIN_LTR && similarity >= LtrParameters::MIN_IDENTITY) {
-                std::tie(newLeftStart, newLeftEnd) = la.getAlignLoc1();
-                std::tie(newRightStart, newRightEnd) = la.getAlignLoc2();
-                newLeftStart = newLeftStart + leftStart;
-                newLeftEnd = newLeftEnd + leftStart;
-                newRightStart = newRightStart + rightStart;
-                newRightEnd = newRightEnd + rightStart;
-
-                leftLtrSeq = seq->substr(newLeftStart, newLeftEnd - newLeftStart);
-                rightLtrSeq = seq->substr(newRightStart, newRightEnd - newRightStart);
-
-                // Count N's
-                if (std::count(leftLtrSeq.begin(), leftLtrSeq.end(), 'N') / double(leftLtrSeq.size()) <= LtrParameters::MAX_N_RATIO &&
-                    std::count(rightLtrSeq.begin(), rightLtrSeq.end(), 'N') / double(rightLtrSeq.size()) <= LtrParameters::MAX_N_RATIO) {
-                    pass = true;
-                }
-
-            }
-            if (pass) {
-                rt->getLeftLTR()->setStart(newLeftStart);
-                rt->getLeftLTR()->setEnd(newLeftEnd);
-                rt->getRightLTR()->setStart(newRightStart);
-                rt->getRightLTR()->setEnd(newRightEnd);
-                r.push_back(rt);
-            }
-            else {
-                removeNests(rt);
-                delete rt;
-                rt = nullptr;
-            }
-        }
-        else {
-            r.push_back(rt);
-        }
-    }
-
-    rtVec = r;
-}
-
-void Filter::filterExtendLength() {
-    std::vector<RT* > r; // vector to hold the RTs that pass the filter
-    int lengthCount = 0;
-    int alignmentCount = 0;
-    int failCount = 0;
     for (auto &rt : rtVec) {
         if (rt->hasRightLTR()) {
             double l1 = rt->getLeftLTR()->getSize();
             double l2 = rt->getRightLTR()->getSize();
             double ratio = l1 < l2 ? l1 / l2 : l2 / l1;
             if (ratio >= LtrParameters::MIN_LENGTH_RATIO) {
-                lengthCount++;
                 r.push_back(rt);
             }
             else {
@@ -345,57 +233,27 @@ void Filter::filterExtendLength() {
                 int leftEnd = rt->getLeftLTR()->getEnd();
                 int rightStart = rt->getRightLTR()->getStart();
                 int rightEnd = rt->getRightLTR()->getEnd();
-                bool foundMatch = false;
 
-                int sizeDifference = std::abs(l1 - l2);
-                Element *left = rt->getLeftLTR();
-                Element *right = rt->getRightLTR();
-                Element *smaller = l1 < l2 ? left : right;
-                Element *larger = l1 < l2 ? right : left;
+                std::string leftLtrSeq = seq->substr(leftStart, leftEnd - leftStart);
+                std::string rightLtrSeq = seq->substr(rightStart, rightEnd - rightStart);
+                LocalAlignment la(leftLtrSeq, rightLtrSeq, 2, -3, -5, -2);
+                int length = la.getLength();
+                double similarity = la.getSimilarity();
 
-                double leftSimilarity = 0.0;
-                int leftInteriorLength = -1;
-                double rightSimilarity = 0.0;
-                int rightInteriorLength = -1;
+                if (length >= LtrParameters::MIN_LTR && similarity >= LtrParameters::MIN_IDENTITY) {
+                    int newLeftStart, newLeftEnd, newRightStart, newRightEnd;
+                    std::tie(newLeftStart, newLeftEnd) = la.getAlignLoc1();
+                    std::tie(newRightStart, newRightEnd) = la.getAlignLoc2();
 
-                // Extend smaller left
-                int newSmallStart = smaller->getStart() - sizeDifference;
-                if (!(newSmallStart <= leftEnd && smaller == right)) {
-                    std::string smallLtrSeq = seq->substr(newSmallStart, smaller->getSize() + sizeDifference);
-                    std::string largeLtrSeq = seq->substr(larger->getStart(), larger->getSize());
-                    LocalAlignment la(smallLtrSeq, largeLtrSeq, 2, -3, -5, -2);
-                    leftInteriorLength = smaller == right ? newSmallStart - leftEnd : -1;
-                    if (leftInteriorLength >= LtrParameters::MIN_INTERIOR) {
-                        leftSimilarity = la.getSimilarity();
-                        foundMatch = true;
-                    }
-                }
 
-                // Extend smaller right
-                int newSmallEnd = smaller->getEnd() + sizeDifference;
-                if (!(newSmallEnd >= rightStart && smaller == left)) {
-                    std::string smallLtrSeq = seq->substr(smaller->getStart(), smaller->getSize() + sizeDifference);
-                    std::string largeLtrSeq = seq->substr(larger->getStart(), larger->getSize());
-                    LocalAlignment la(smallLtrSeq, largeLtrSeq, 2, -3, -5, -2);
-                    rightInteriorLength = smaller == left ? rightStart - newSmallEnd : -1;
-                    if (rightInteriorLength >= LtrParameters::MIN_INTERIOR) {
-                        rightSimilarity = la.getSimilarity();
-                        foundMatch = true;
-                    }
-                }
-
-                if (foundMatch && (leftSimilarity >= LtrParameters::MIN_IDENTITY || rightSimilarity >= LtrParameters::MIN_IDENTITY)) {
-                    if (leftSimilarity > rightSimilarity) {
-                        smaller->setStart(newSmallStart);
-                    }
-                    else {
-                        smaller->setEnd(newSmallEnd);
-                    }
-                    alignmentCount++;
+                    rt->getLeftLTR()->setStart(leftStart + newLeftStart);
+                    rt->getLeftLTR()->setEnd(leftStart + newLeftEnd);
+                    rt->getRightLTR()->setStart(rightStart + newRightStart);
+                    rt->getRightLTR()->setEnd(rightStart + newRightEnd);
                     r.push_back(rt);
+
                 }
                 else {
-                    failCount++;
                     removeNests(rt);
                     delete rt;
                     rt = nullptr;
@@ -408,10 +266,152 @@ void Filter::filterExtendLength() {
     }
 
     rtVec = r;
+}
+
+// void Filter::filterLengthRatio() {
+//     std::vector<RT* > r; // vector to hold the RTs that pass the filter
+//     for (auto &rt : rtVec) {
+//         if (rt->hasRightLTR()) {
+//             int leftStart = rt->getLeftLTR()->getStart();
+//             int leftEnd = rt->getLeftLTR()->getEnd();
+//             int rightStart = rt->getRightLTR()->getStart();
+//             int rightEnd = rt->getRightLTR()->getEnd();
+
+//             std::string leftLtrSeq = seq->substr(leftStart, leftEnd - leftStart);
+//             std::string rightLtrSeq = seq->substr(rightStart, rightEnd - rightStart);
+//             LocalAlignment la(leftLtrSeq, rightLtrSeq, 2, -3, -5, -2);
+//             int length = la.getLength();
+//             double similarity = la.getSimilarity();
+
+//             int newLeftStart, newLeftEnd, newRightStart, newRightEnd;
+
+
+//             bool pass = false;
+//             if (length >= LtrParameters::MIN_LTR && similarity >= LtrParameters::MIN_IDENTITY) {
+//                 std::tie(newLeftStart, newLeftEnd) = la.getAlignLoc1();
+//                 std::tie(newRightStart, newRightEnd) = la.getAlignLoc2();
+//                 newLeftStart = newLeftStart + leftStart;
+//                 newLeftEnd = newLeftEnd + leftStart;
+//                 newRightStart = newRightStart + rightStart;
+//                 newRightEnd = newRightEnd + rightStart;
+
+//                 leftLtrSeq = seq->substr(newLeftStart, newLeftEnd - newLeftStart);
+//                 rightLtrSeq = seq->substr(newRightStart, newRightEnd - newRightStart);
+
+//                 // Count N's
+//                 if (std::count(leftLtrSeq.begin(), leftLtrSeq.end(), 'N') / double(leftLtrSeq.size()) <= LtrParameters::MAX_N_RATIO &&
+//                     std::count(rightLtrSeq.begin(), rightLtrSeq.end(), 'N') / double(rightLtrSeq.size()) <= LtrParameters::MAX_N_RATIO) {
+//                     pass = true;
+//                 }
+
+//             }
+//             if (pass) {
+//                 rt->getLeftLTR()->setStart(newLeftStart);
+//                 rt->getLeftLTR()->setEnd(newLeftEnd);
+//                 rt->getRightLTR()->setStart(newRightStart);
+//                 rt->getRightLTR()->setEnd(newRightEnd);
+//                 r.push_back(rt);
+//             }
+//             else {
+//                 removeNests(rt);
+//                 delete rt;
+//                 rt = nullptr;
+//             }
+//         }
+//         else {
+//             r.push_back(rt);
+//         }
+//     }
+
+//     rtVec = r;
+// }
+
+// void Filter::filterExtendLength() {
+//     std::vector<RT* > r; // vector to hold the RTs that pass the filter
+//     int lengthCount = 0;
+//     int alignmentCount = 0;
+//     int failCount = 0;
+//     for (auto &rt : rtVec) {
+//         if (rt->hasRightLTR()) {
+//             double l1 = rt->getLeftLTR()->getSize();
+//             double l2 = rt->getRightLTR()->getSize();
+//             double ratio = l1 < l2 ? l1 / l2 : l2 / l1;
+//             if (ratio >= LtrParameters::MIN_LENGTH_RATIO) {
+//                 lengthCount++;
+//                 r.push_back(rt);
+//             }
+//             else {
+//                 int leftStart = rt->getLeftLTR()->getStart();
+//                 int leftEnd = rt->getLeftLTR()->getEnd();
+//                 int rightStart = rt->getRightLTR()->getStart();
+//                 int rightEnd = rt->getRightLTR()->getEnd();
+//                 bool foundMatch = false;
+
+//                 int sizeDifference = std::abs(l1 - l2);
+//                 Element *left = rt->getLeftLTR();
+//                 Element *right = rt->getRightLTR();
+//                 Element *smaller = l1 < l2 ? left : right;
+//                 Element *larger = l1 < l2 ? right : left;
+
+//                 double leftSimilarity = 0.0;
+//                 int leftInteriorLength = -1;
+//                 double rightSimilarity = 0.0;
+//                 int rightInteriorLength = -1;
+
+//                 // Extend smaller left
+//                 int newSmallStart = smaller->getStart() - sizeDifference;
+//                 if (!(newSmallStart <= leftEnd && smaller == right)) {
+//                     std::string smallLtrSeq = seq->substr(newSmallStart, smaller->getSize() + sizeDifference);
+//                     std::string largeLtrSeq = seq->substr(larger->getStart(), larger->getSize());
+//                     LocalAlignment la(smallLtrSeq, largeLtrSeq, 2, -3, -5, -2);
+//                     leftInteriorLength = smaller == right ? newSmallStart - leftEnd : -1;
+//                     if (leftInteriorLength >= LtrParameters::MIN_INTERIOR) {
+//                         leftSimilarity = la.getSimilarity();
+//                         foundMatch = true;
+//                     }
+//                 }
+
+//                 // Extend smaller right
+//                 int newSmallEnd = smaller->getEnd() + sizeDifference;
+//                 if (!(newSmallEnd >= rightStart && smaller == left)) {
+//                     std::string smallLtrSeq = seq->substr(smaller->getStart(), smaller->getSize() + sizeDifference);
+//                     std::string largeLtrSeq = seq->substr(larger->getStart(), larger->getSize());
+//                     LocalAlignment la(smallLtrSeq, largeLtrSeq, 2, -3, -5, -2);
+//                     rightInteriorLength = smaller == left ? rightStart - newSmallEnd : -1;
+//                     if (rightInteriorLength >= LtrParameters::MIN_INTERIOR) {
+//                         rightSimilarity = la.getSimilarity();
+//                         foundMatch = true;
+//                     }
+//                 }
+
+//                 if (foundMatch && (leftSimilarity >= LtrParameters::MIN_IDENTITY || rightSimilarity >= LtrParameters::MIN_IDENTITY)) {
+//                     if (leftSimilarity > rightSimilarity) {
+//                         smaller->setStart(newSmallStart);
+//                     }
+//                     else {
+//                         smaller->setEnd(newSmallEnd);
+//                     }
+//                     alignmentCount++;
+//                     r.push_back(rt);
+//                 }
+//                 else {
+//                     failCount++;
+//                     removeNests(rt);
+//                     delete rt;
+//                     rt = nullptr;
+//                 }
+//             }
+//         }
+//         else {
+//             r.push_back(rt);
+//         }
+//     }
+
+//     rtVec = r;
     
 
-    std::cout << "Length: " << lengthCount << " Alignment: " << alignmentCount << " Fail: " << failCount << std::endl;
-}
+//     std::cout << "Length: " << lengthCount << " Alignment: " << alignmentCount << " Fail: " << failCount << std::endl;
+// }
 
 // void Filter::filterLengthRatio() {
 //     std::vector<RT* > r; // vector to hold the RTs that pass the filter

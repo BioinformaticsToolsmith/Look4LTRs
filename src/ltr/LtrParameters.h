@@ -79,7 +79,7 @@ public:
 	// Minimum overlap needed between stretch and repeat divided by stretch size
 	static constexpr double MIN_STRETCH_OVERLAP = 0.50;
 
-	static constexpr double MIN_LENGTH_RATIO = 0.8;
+	static constexpr double MIN_LENGTH_RATIO = 0.9;
 
 	static constexpr double MIN_IDENTITY_FILTER = 0.5;
 
