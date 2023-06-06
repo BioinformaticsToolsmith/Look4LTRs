@@ -56,6 +56,9 @@ public:
 
 	void printForwardScores(std::string fileName);
 	void printBackwardScores(std::string fileName);
+
+	void removeForwardScores();
+	void removeBackwardScores();
 };
 
 #endif /* SCORERTR_H_ */

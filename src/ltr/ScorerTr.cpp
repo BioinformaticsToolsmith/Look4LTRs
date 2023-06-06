@@ -52,10 +52,14 @@ ScorerTr::~ScorerTr()
 	delete kmerTable;
 
 	forwardList->clear();
-	delete forwardList;
+	if (forwardList != nullptr) {
+		delete forwardList;
+	}
 
 	backwardList->clear();
-	delete backwardList;
+	if (backwardList != nullptr) {
+		delete backwardList;
+	}
 }
 
 void ScorerTr::score()
@@ -145,4 +149,18 @@ void ScorerTr::printBackwardScores(std::string fileName)
 	ofstream out(fileName);
 	out.write(s.str().c_str(), s.str().length());
 	out.close();
+}
+
+void ScorerTr::removeForwardScores()
+{
+	forwardList->clear();
+	delete forwardList;
+	forwardList = nullptr;
+}
+
+void ScorerTr::removeBackwardScores()
+{
+	backwardList->clear();
+	delete backwardList;
+	backwardList = nullptr;
 }

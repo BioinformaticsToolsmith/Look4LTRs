@@ -69,16 +69,18 @@ void ModulePipeline::buildElements(std::string *chromosome)
     // std::cout << "Scoring the sequence..." << std::endl;
     ScorerTr *st = new ScorerTr(*chromosome, LtrParameters::K, LtrParameters::MIN_DISTANCE, LtrParameters::MAX_DISTANCE);
 
-
     // Merge the scores
     // std::cout << "Merging the scores forward..." << std::endl;
     forwardMerger = new Merger(st->getForwardScores(), LtrParameters::MIN_STRETCH, LtrParameters::MAX_GAP, LtrParameters::SIM_MARGIN, LtrParameters::INT_MARGIN, true);
+    st->removeForwardScores();
     // std::cout << "Size of stretches: " << forwardMerger->getStretchVec()->size() << std::endl;
 
     // std::cout << "Merging the scores backward..." << std::endl;
     backwardMerger = new Merger(st->getBackwardScores(), LtrParameters::MIN_STRETCH, LtrParameters::MAX_GAP, LtrParameters::SIM_MARGIN, LtrParameters::INT_MARGIN, false);
+    st->removeBackwardScores();
 
-
+    delete st;
+    st = nullptr;
 
     // Detect the elements
     // std::cout << "Detecting the elements..." << std::endl;
