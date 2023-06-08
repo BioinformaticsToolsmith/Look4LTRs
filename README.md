@@ -96,6 +96,8 @@ Look4LTRs is activated from the command line. The following table describes the 
     ```bash
     ./look4ltrs --fasta /###/###/Phaseolus_vulgaris/Fasta/ --train /###/###/Vigna_radiata/Fasta --out /###/###/outputdir/ --parallel 8
     
+When passing more than one fasta directory through --fasta, --train, or combined, give the full path to these directories. Otherwise, Look4LTRs can not properly build symbolic links.
+    
 ## Scripts
 
 | Script | Description | Usage | Example |
