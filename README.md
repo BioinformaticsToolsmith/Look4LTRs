@@ -26,6 +26,8 @@ make look4ltrs
 ## INPUT
 Look4LTRs accepts FASTA format files, as well as multi-FASTA format. It is suggested that, at minimum, an entire genome is given to Look4LTRs, to enhance its self-supervised capabilities. Multiple genomes may be passed into Look4LTRs, but take caution with the memory requirements, and lower the number of threads (if any) if too much memory is being utilized. Additionally, Look4LTRs accepts training genomes that will not be predicted upon but are used to enhance the prediction of other genomes.
 
+The FASTA format files given to Look4LTRs MUST have a .fa extension. No other extension is allowed!
+
 ## OUTPUT
 In the output directory, Look4LTRs will create three new directories. Look4LTRs will not overwrite these directories or files within UNLESS the files are generated from the same FASTA files. The directories created are as follows:
 
