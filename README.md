@@ -60,7 +60,7 @@ RTR stands for RetroTransposon Relationship format file. It is Look4LTRs specifi
   13. *TSDEnd* is the end of the target site duplication. This is NA if a TSD could not be found.
   14. *CaseType* reflects which matching case this LTR RT came from; for example, a recently nested LTR RT would be marked with RecentlyNested.
   15. *GraphGroup* is the ID of a graph. Look4LTRs utilizes a graph when matching LTRs. Each graph represents nearby elements of the same family. This column is an ID to the graph the LTR RT/solo LTR belongs to.
-  16. *LTRIdentity* is the identity between the two LTRs of an LTR RT, NA if a solo LTR. Note that if the length coverage of the two LTRs is too small, this is reported as 0 due to how Identity (our alignment-free machine-learning model) performs similarity comparison. 
+  16. *LTRIdentity* is the identity between the two LTRs of an LTR RT, NA if a solo LTR.
  
 ### Cpx
 CPX stands for ComPleX format file. It is a Look4LTRs specific format that outputs complex regions of many same-family elements that Look4LTRs was unsure about. There are a variable number of columns.
