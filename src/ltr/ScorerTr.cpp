@@ -50,14 +50,13 @@ ScorerTr::ScorerTr(std::string &seqIn, int motifSizeIn, int minIn, int maxIn) : 
 ScorerTr::~ScorerTr()
 {
 	delete kmerTable;
-
-	forwardList->clear();
 	if (forwardList != nullptr) {
+		forwardList->clear();
 		delete forwardList;
 	}
 
-	backwardList->clear();
 	if (backwardList != nullptr) {
+		backwardList->clear();
 		delete backwardList;
 	}
 }
