@@ -59,6 +59,7 @@ private:
     //     }
     // }};
     std::set<RT*> nestSet;
+    std::set<RT*> outerSet;
 public:
     RTComplete(Element *leftLTR, Element *rightLTR, std::string caseType, int caseRank, int graphGroup);
     ~RTComplete();
@@ -75,6 +76,7 @@ public:
     const Element *getRightLTR() const;
     std::vector<Element*> getLTRVec() const override;
     const std::set<RT*> getNestSet() const;
+    const std::set<RT*> getOuterSet() const;
     int getPPTStart() const;
     int getPPTEnd() const;
     std::pair<int, int> getLeftTSD() const;
@@ -93,7 +95,10 @@ public:
     void nest(RT* rt);
     void removeNest(RT* rt);
     bool hasNest() const;
+    bool isNested() const;
     bool couldNest(RT *rt) const;
+    void addOuter(RT *rt);
+    void removeOuter(RT *rt);
 
     void extend(int k, bool isForward = true);
     void expand(int pos, int length);

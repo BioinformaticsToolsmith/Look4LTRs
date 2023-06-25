@@ -23,7 +23,7 @@ RTComplete::RTComplete(Element *leftLTR, Element *rightLTR, std::string caseType
 
 RTComplete::~RTComplete() {
     for (auto ptr : nestSet) {
-        ptr->setOuterNest(nullptr);
+        ptr->removeOuter(this);
     }
     delete leftLTR;
     delete rightLTR;
@@ -118,6 +118,10 @@ const std::set<RT*> RTComplete::getNestSet() const {
     return nestSet;
 }
 
+const std::set<RT*> RTComplete::getOuterSet() const {
+    return outerSet;
+}
+
 int RTComplete::getPPTStart() const {
     return PPTStart;
 }
@@ -197,12 +201,11 @@ bool RTComplete::hasLeftLTR() const
 
 void RTComplete::nest(RT* rt) {
     nestSet.insert(rt);
-    rt->setOuterNest(this);
+    rt->addOuter(this);
 }
 
 void RTComplete::removeNest(RT* rt) {
     if (nestSet.count(rt) == 1) {
-        rt->setOuterNest(nullptr);
         nestSet.erase(rt);
     }
 }
@@ -211,10 +214,24 @@ bool RTComplete::hasNest() const {
     return nestSet.size() > 0 ? true : false;
 }
 
+bool RTComplete::isNested() const {
+    return outerSet.size() > 0 ? true : false;
+}
+
 
 bool RTComplete::couldNest(RT *rt) const {
-    return (rt->getOuterNest() != this && rt->getStart() > leftLTR->getEnd() && rt->getEnd() < rightLTR->getStart() &&
+    return (rt->getStart() > leftLTR->getEnd() && rt->getEnd() < rightLTR->getStart() &&
             rt->hasLeftLTR()) ? true : false;
+}
+
+void RTComplete::addOuter(RT *rt) {
+    outerSet.insert(rt);
+}
+
+void RTComplete::removeOuter(RT *rt) {
+    if (outerSet.count(rt) == 1) {
+        outerSet.erase(rt);
+    }
 }
 
 void RTComplete::extend(int k, bool isForward) {

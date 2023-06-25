@@ -10,6 +10,7 @@
 #include <string>
 
 #include <iostream>
+#include<bits/stdc++.h>
 
 class LtrUtility {
 public:
@@ -63,6 +64,9 @@ public:
     static void removeIllFormat(std::vector<RT*> &rtVec);
 
     static void renameCaseType(std::vector<RT*> &rtVec, std::string currName, std::string newName);
+
+    static std::string lcs(std::string &str1, std::string &str2);
+
 
 private:
     // A table of complements for each nucleotide

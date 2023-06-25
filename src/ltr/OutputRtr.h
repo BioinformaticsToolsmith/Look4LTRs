@@ -33,6 +33,7 @@
 #include <iterator>
 #include <unordered_map>
 #include <sstream>
+#include <algorithm>
 
 class OutputRtr : Output
 {

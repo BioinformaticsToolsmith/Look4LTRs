@@ -80,12 +80,16 @@ void CaseRecent::apply(DirectedGraph<Element> &graph, std::vector<Element *> &fo
 
                 oLeftLtr  = findOuterLtr(nFor, graph);
                 oRightLtr = findOuterLtr(nBac, graph);
-
+                // #pragma omp critical 
+                // {
+                //     std::cout << "Made it to before" << std::endl;
+                // }
                 if (oLeftLtr != nullptr && oRightLtr != nullptr && checkOuterRt(oLeftLtr, nLeftLtr, nRightLtr, oRightLtr)) {
                     // Building strings for Identity check
                     std::string outerInteriorSeq  = seq->substr(oLeftLtr->getEnd(), nLeftLtr->getStart() - oLeftLtr->getEnd());
                     outerInteriorSeq += seq->substr(nRightLtr->getEnd(), oRightLtr->getStart() - nRightLtr->getEnd());
                     std::string innerInteriorSeq  = seq->substr(nLeftLtr->getEnd(), nRightLtr->getStart() - nLeftLtr->getEnd());
+
 
                     if (areRecentSeqSame(outerInteriorSeq, innerInteriorSeq)) {
                         isFail = false;

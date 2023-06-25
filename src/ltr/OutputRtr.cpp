@@ -45,8 +45,14 @@ std::string OutputRtr::formatRt(std::string& chrom, RT* rt, std::unordered_map<R
     // Has nested?
     if (rt->hasRightLTR() && rt->hasNest()) {
         s << "{";
+        std::vector<int> idVec;
         for (auto nestPtr : rt->getNestSet()) {
-            s << idTable[nestPtr] << ",";
+            idVec.push_back(idTable[nestPtr]);
+            // s << idTable[nestPtr] << ",";
+        }
+        std::sort(idVec.begin(), idVec.end());
+        for (auto id : idVec) {
+            s << id << ",";
         }
         s << "}" << "\t";
     }
@@ -55,9 +61,18 @@ std::string OutputRtr::formatRt(std::string& chrom, RT* rt, std::unordered_map<R
     }
 
     // Is nested?
-    if (rt->hasOuter()) {
-        s << idTable[rt->getOuterNest()] << "\t";
-
+    if (rt->isNested()) {
+        s << "{";
+        std::vector<int> idVec;
+        for (auto outerPtr : rt->getOuterSet()) {
+            idVec.push_back(idTable[outerPtr]);
+            // s << idTable[outerPtr] << ",";
+        }
+        std::sort(idVec.begin(), idVec.end());
+        for (auto id : idVec) {
+            s << id << ",";
+        }
+        s << "}" << "\t";
     }
     else {
         s << "NA" << "\t";

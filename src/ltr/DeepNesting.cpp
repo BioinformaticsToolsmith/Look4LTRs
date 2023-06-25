@@ -72,6 +72,9 @@ void DeepNesting::findRegion() {
                             break;
                         }
                     }
+
+                    
+
                     if (!foundR) {
                         delete r;
                         r = nullptr;
@@ -79,6 +82,7 @@ void DeepNesting::findRegion() {
                     else {
                         // delete r;
                         // r = nullptr;
+                        r->setGraphGroup(graphGroup);
                         recentNestVec.push_back(r);
                     }
                 }
@@ -115,10 +119,10 @@ std::vector<ModulePipeline*> DeepNesting::findDeep(std::string &graphSeq, int re
     for (auto &rt : *rtVec) {
         // Searching for the recently nested found inside
         if (rt->getCaseType() == "RecentlyNestedInner") {
-            // #pragma omp critical
-            // {
-            //     std::cout << "Found a nest at level " << level << std::endl;
-            // }
+            #pragma omp critical
+            {
+                std::cout << "Found a nest at level " << level << std::endl;
+            }
             auto nestModulePipeline = findDeep(cutSeq, rt->getStart(), rt->getSize(), level + 1);
             auto nestVec = nestModulePipeline.front()->getRtVec();
             r.insert(r.end(), nestVec->begin(), nestVec->end());

@@ -47,37 +47,50 @@ void PostProcess::apply(bool nestOnly) {
 
 void PostProcess::nest() {
     // Top of the stack is the last, most outer RT to attempt to nest within.
-    std::stack<RT*> nestStack;
+    // std::stack<RT*> nestStack;
 
-    for (int i = 0; i < rtVec.size(); i++) {
-        // If nestStack is empty, there is no current outer RT to check
-        while (!nestStack.empty()) {
-            // Nest the RT at rtVec[i] in the outer RT at nestStack's top IF it is within the interior.
-            if (nestStack.top()->couldNest(rtVec[i])) {
-                nestStack.top()->nest(rtVec[i]);
-                break;
-            }
-            // If the RT at rtVec[i] is after the end of the RT at nestStack's top, pop the top of the stack. No more RTs can be logically nested within it.
-            else if (rtVec[i]->getStart() >= nestStack.top()->getEnd() || rtVec[i]->getEnd() >= nestStack.top()->getEnd()) {
-                nestStack.pop();
-            }
-            else {
-                break;
-            }
-        }
-        // Now we push the current RT onto the stack to check if the next RTs can be nested within it.
-        nestStack.push(rtVec[i]);
-    }
     // for (int i = 0; i < rtVec.size(); i++) {
-    //     for (int j = i + 1; j < rtVec.size(); j++) {
-    //         if (rtVec[i]->couldNest(rtVec[j])) {
-    //             rtVec[i]->nest(rtVec[j]);
+    //     // If nestStack is empty, there is no current outer RT to check
+    //     while (!nestStack.empty()) {
+    //         // Nest the RT at rtVec[i] in the outer RT at nestStack's top IF it is within the interior.
+    //         if (nestStack.top()->couldNest(rtVec[i])) {
+    //             nestStack.top()->nest(rtVec[i]);
+    //             break;
     //         }
-    //         else if (rtVec[j]->getStart() >= rtVec[i]->getEnd()) {
+    //         // If the RT at rtVec[i] is after the end of the RT at nestStack's top, pop the top of the stack. No more RTs can be logically nested within it.
+    //         else if (rtVec[i]->getStart() >= nestStack.top()->getEnd() || rtVec[i]->getEnd() >= nestStack.top()->getEnd()) {
+    //             nestStack.pop();
+    //         }
+    //         else {
     //             break;
     //         }
     //     }
+    //     // Now we push the current RT onto the stack to check if the next RTs can be nested within it.
+    //     nestStack.push(rtVec[i]);
     // }
+
+    for (int i = rtVec.size() - 1; i >= 0; i--) {
+        for (int j = i; j < rtVec.size(); j++) {
+            if (rtVec[i]->couldNest(rtVec[j])) {
+                bool isNested = false;
+                for (auto rt : rtVec[i]->getNestSet()) {
+                    if (rt->couldNest(rtVec[j])) {
+                        isNested = true;
+                        break;
+                    }
+                }
+
+                if (!isNested) {
+                    rtVec[i]->nest(rtVec[j]);
+                }
+
+            }
+            else if(rtVec[i]->getStart() >= rtVec[j]->getEnd()) {
+                break;
+            }
+        }
+    }
+
 }
 
 void PostProcess::extendLTR(RT *rtPtr) {

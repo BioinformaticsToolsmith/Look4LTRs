@@ -75,6 +75,10 @@ const std::set<RT*> RTSolo::getNestSet() const {
     throw std::exception();
 }
 
+const std::set<RT*> RTSolo::getOuterSet() const {
+    return outerSet;
+}
+
 int RTSolo::getPPTStart() const {
     std::cerr << "Unsupported operation: A solo LTR RT does not have a PPT." << std::endl;
     throw std::exception();
@@ -148,9 +152,25 @@ bool RTSolo::hasNest() const {
     throw std::exception();
 }
 
+bool RTSolo::isNested() const {
+    return outerSet.size() > 0 ? true : false;
+}
+
 bool RTSolo::couldNest(RT *rt) const {
     return false;
 }
+
+void RTSolo::addOuter(RT *rt){
+    outerSet.insert(rt);
+}
+
+void RTSolo::removeOuter(RT *rt){
+    if (outerSet.count(rt) == 1) {
+        outerSet.erase(rt);
+    }
+}
+
+
 
 void RTSolo::extend(int k, bool isForward) {
     if (isForward) {

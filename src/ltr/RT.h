@@ -36,9 +36,6 @@ typedef std::vector<std::pair<int, int>> Range;
 class RT
 {
 protected:
-    // If this RT is nested, outerNest points to the RT in which this one is nested in
-    RT* outerNest = nullptr; 
-
     std::string caseType;
     int caseRank;
     int graphGroup;
@@ -73,6 +70,8 @@ public:
     virtual std::vector<Element*> getLTRVec() const = 0;
     // Get the set of nested RTs
     virtual const std::set<RT*> getNestSet() const = 0;
+    // Get the set of outer RTs (that this RT is nested in)
+    virtual const std::set<RT*> getOuterSet() const = 0;
     // Get PPT start
     virtual int getPPTStart() const = 0;
     // Get PPT end
@@ -84,10 +83,7 @@ public:
     // Get the Identity score between the two LTRs for only RT COMPLETE
     virtual double getIdentityScore() const = 0;
 
-    // Get the outermost RT that this RT is nested in
-    RT* getOuterNest() {
-        return outerNest;
-    }
+
     // Get the case type
     std::string getCaseType() {
         return caseType;
@@ -116,10 +112,6 @@ public:
     void setCaseType(std::string caseType) {
         this->caseType = caseType;
     }
-    // Set the outermost RT that this RT is nested in
-    void setOuterNest(RT* rt) {
-        this->outerNest = rt;
-    }
     // Sets the graph group
     void setGraphGroup(int graphGroup) {
         this->graphGroup = graphGroup;
@@ -140,12 +132,14 @@ public:
     virtual void removeNest(RT* rt) = 0;
     // Get if this RT has any nested RTs
     virtual bool hasNest() const = 0;
+    // Get if this RT is nested in any RTs
+    virtual bool isNested() const = 0;
     // Get if the given RT could be nested in this RT
     virtual bool couldNest(RT *rt) const = 0;
-    // Get if this RT is nested in another RT
-    bool hasOuter() {
-        return outerNest != nullptr;
-    }
+    // Add an outer RT
+    virtual void addOuter(RT *rt) = 0;
+    // Remove an outer RT
+    virtual void removeOuter(RT *rt) = 0;
 
 
     /**

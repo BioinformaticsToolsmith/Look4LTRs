@@ -34,6 +34,7 @@ class RTSolo : public RT
 {
 private:
     Element *ltr;
+    std::set<RT*> outerSet;
 
 public:
     RTSolo(Element *ltr, std::string caseType, int caseRank, int graphGroup);
@@ -51,6 +52,7 @@ public:
     virtual const Element *getRightLTR() const;
     virtual std::vector<Element*> getLTRVec() const override;
     virtual const std::set<RT*> getNestSet() const;
+    virtual const std::set<RT*> getOuterSet() const;
     virtual int getPPTStart() const;
     virtual int getPPTEnd() const;
     virtual std::pair<int, int> getLeftTSD() const;
@@ -69,7 +71,11 @@ public:
     virtual void nest(RT* rt);
     virtual void removeNest(RT* rt);
     virtual bool hasNest() const;
+    virtual bool isNested() const;
+
     bool couldNest(RT *rt) const;
+    void addOuter(RT *rt);
+    void removeOuter(RT *rt);
 
     void extend(int k, bool isForward = true);
     void expand(int pos, int length);

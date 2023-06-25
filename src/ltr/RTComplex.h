@@ -53,6 +53,7 @@ public:
     virtual const Element *getRightLTR() const;
     virtual std::vector<Element*> getLTRVec() const override;
     virtual const std::set<RT*> getNestSet() const;
+    virtual const std::set<RT*> getOuterSet() const;
     virtual int getPPTStart() const;
     virtual int getPPTEnd() const;
     virtual std::pair<int, int> getLeftTSD() const;
@@ -72,8 +73,11 @@ public:
     virtual void nest(RT* rt);
     virtual void removeNest(RT* rt);
     virtual bool hasNest() const;
-    bool couldNest(RT *rt) const;
-    bool isNested(RT *rt) const;
+    virtual bool isNested() const;
+    virtual bool couldNest(RT *rt) const;
+    virtual void addOuter(RT *rt);
+    virtual void removeOuter(RT *rt);
+
 
     void extend(int k, bool isForward = true);
     void expand(int pos, int length);

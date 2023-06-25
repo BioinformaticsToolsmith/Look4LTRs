@@ -102,6 +102,10 @@ const std::set<RT*> RTComplex::getNestSet() const {
     throw std::exception();
 }
 
+const std::set<RT*> RTComplex::getOuterSet() const {
+    std::cerr << "Unsupported operation: A complex LTR RT can not be nested." << std::endl;
+    throw std::exception();}
+
 int RTComplex::getPPTStart() const {
     std::cerr << "Unsupported operation: A complex LTR RT has multiple possible PPTs." << std::endl;
     throw std::exception();
@@ -172,9 +176,25 @@ bool RTComplex::hasNest() const {
     throw std::exception();
 }
 
+bool RTComplex::isNested() const {
+    std::cerr << "Unsupported operation: A complex LTR RT can not be nested." << std::endl;
+    throw std::exception();
+}
+
 bool RTComplex::couldNest(RT *rt) const {
     return false;
 }
+
+void RTComplex::addOuter(RT *rt) {
+    std::cerr << "Unsopported operation: A complex LTR RT can not be nested." << std::endl;
+    throw std::exception();
+}
+
+void RTComplex::removeOuter(RT *rt) {
+    std::cerr << "Unsopported operation: A complex LTR RT can not be nested." << std::endl;
+    throw std::exception();
+}
+
 
 void RTComplex::extend(int k, bool isForward) {
     for (auto ltrPtr : ltrVec) {

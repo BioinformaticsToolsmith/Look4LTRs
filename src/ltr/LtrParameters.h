@@ -28,9 +28,9 @@ public:
 
 	static const int K = 13;
 
-	static const int MIN_DISTANCE = 250;
+	static const int MIN_DISTANCE = 400;
 
-	static const int MAX_DISTANCE = 40000;
+	static const int MAX_DISTANCE = 27000;
 
 	// Minimum size of a stretch to be designated as a 'Keep' stretch
 	static const int MIN_STRETCH = 16;
@@ -90,13 +90,13 @@ public:
 	static constexpr double MIN_IDENTITY_RECENT = 0.6;
 
 	// Min size of LTR; inclusive
-	static const int MIN_LTR = 80;
+	static const int MIN_LTR = 200;
 
 	// Max size of LTR; inclusive
 	static const int MAX_LTR = 7000;
 
 	// Min size of interior region of RT; inclusive
-	static const int MIN_INTERIOR = 70;
+	static const int MIN_INTERIOR = 200;
 
 	// Max size of interior region of RT; inclusive
 	static const int MAX_INTERIOR = 25900;

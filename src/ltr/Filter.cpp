@@ -32,10 +32,22 @@ Filter::Filter(std::vector<RT*> &_rtVec, Red &_red, std::string *_seq) : rtVec(_
 void Filter::apply() {
     // Check to see if rtVec has any RTs to filter
     if (rtVec.size() > 0) {
+
+        // for (auto rt : rtVec) {
+        //     std::cout << rt->getCaseType() << std::endl;
+        //     for (auto outer : rt->getOuterSet()) {
+        //         std::cout << outer->getCaseType() << std::endl;
+        //     }
+        //     if (rt->hasRightLTR()) {
+        //         for (auto nest : rt->getNestSet()) {
+        //             std::cout << nest->getCaseType() << std::endl;
+        //         }
+        //     }
+        // }
+
         filterLength();
         filterN();
         filterLengthRatio();
-        // filterExtendLength();
         filterPPT();
         filterMITE();
         filterLonesomes();
@@ -48,6 +60,7 @@ void Filter::apply() {
 void Filter::filterLength() {
     // vector to hold the RTs that pass the filter
     std::vector<RT* > r;
+    std::vector<RT* > fail;
     for (auto rtPtr : rtVec) {
 
         bool isFail = true;
@@ -69,7 +82,7 @@ void Filter::filterLength() {
                 trueInteriorLength = interiorLength;
             }
             else {
-                std::vector<RT*> nestVec = std::vector<RT*>(nestSet.begin(), nestSet.end());
+                std::vector<RT*> nestVec{nestSet.begin(), nestSet.end()};
                 std::sort(nestVec.begin(), nestVec.end(), [](RT* a, RT* b) { return a->getLeftLTR()->getStart() < b->getLeftLTR()->getStart(); });
 
                 std::vector<std::pair<int, int>> nestRanges;
@@ -151,14 +164,16 @@ void Filter::filterLength() {
 
 
         if (isFail) {
-            removeNests(rtPtr);
-            delete rtPtr;
+            fail.push_back(rtPtr);
         }
         else {
             r.push_back(rtPtr);
         }
     }
-
+    for (auto rtPtr : fail) {
+        removeNests(rtPtr);
+        delete rtPtr;
+    }
     rtVec = r;
 }
 
@@ -694,14 +709,20 @@ void Filter::markTSD() {
 
             if (rightTSDSeq.size() > 0 && leftTSDSeq.size() > 0) {
 
-                LocalAlignment la(leftTSDSeq, rightTSDSeq, 2, -3, -5, -2);
-                int length = la.getLength();
+                std::string lcsString = LtrUtility::lcs(leftTSDSeq, rightTSDSeq);
+                int length = lcsString.size();
 
                 // Only if the alignment length is at least the size of the smallest TSD.
                 if (length >= LtrParameters::MIN_TSD_SIZE) {
                     int leftStart, leftEnd, rightStart, rightEnd;
-                    std::tie(leftStart, leftEnd) = la.getAlignLoc1();
-                    std::tie(rightStart, rightEnd) = la.getAlignLoc2();
+                    leftStart = leftTSDSeq.find(lcsString);
+                    leftEnd = leftStart + lcsString.size();
+                    rightStart = rightTSDSeq.find(lcsString);
+                    rightEnd = rightStart + lcsString.size();
+
+                    // std::tie(leftStart, leftEnd) = la.getAlignLoc1();
+                    // std::tie(rightStart, rightEnd) = la.getAlignLoc2();
+
                     leftStart += leftTSDStart;
                     leftEnd += leftTSDStart;
                     rightStart += rightTSDStart;
@@ -745,19 +766,25 @@ void Filter::filterLonesomes() {
 }
 
 void Filter::removeNests(RT* rtPtr) {
-    RT* outer = nullptr;
-    if (rtPtr->hasOuter()) {
-        outer = rtPtr->getOuterNest();
-        outer->removeNest(rtPtr);
-    }
+    auto outerSet = rtPtr->getOuterSet();
+
     if (rtPtr->hasRightLTR()) {
         for (auto p : rtPtr->getNestSet())  {
             rtPtr->removeNest(p);
-            if (outer != nullptr) {
+            p->removeOuter(rtPtr);
+            for (auto outer : outerSet) {
                 outer->nest(p);
             }
         }
     }
+
+    if (rtPtr->isNested()) {
+        for (auto outer : outerSet) {
+            outer->removeNest(rtPtr);
+            rtPtr->removeOuter(outer);
+        }
+    }
+
 }
 
 std::vector<int> Filter::scoreSeq(int s, int e) {

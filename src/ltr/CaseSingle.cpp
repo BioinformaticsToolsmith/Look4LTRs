@@ -27,7 +27,6 @@ void CaseSingle::apply(DirectedGraph<Element> &graph, std::vector<Element *> &fo
     for (auto fElePtr : forwardVec) {
 
         for (auto bElePtr : getDiagonals(fElePtr, graph)) {
-            assert (bElePtr->getIsForward() == false);
 
             Element *newEle = nullptr;
             Element *leftLtr = nullptr;

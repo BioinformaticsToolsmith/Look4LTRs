@@ -382,6 +382,12 @@ int main(int argc, char*argv[]) {
             // Remove the element file
             // mp.removeElements();
             // Matching the elements
+
+            // #pragma omp critical 
+            // {
+            //     std::cout << "Matching " << chromName << std::endl;
+            // }
+
             mp.matchElements(*icStandard, *icRecent, chrom.second);
 
             // Found LTR RTs; overall LTR RT vec
@@ -389,7 +395,11 @@ int main(int argc, char*argv[]) {
             // The complex LTR RT regions
             auto complexVecPtr = mp.getComplexVec();
 
-            
+            // #pragma omp critical 
+            // {
+            //     std::cout << "Deep Nests " << chromName << std::endl;
+            // }
+
             // Finding Recently Nested LTR RTs
             mp.findDeepNests(*icStandard, *icRecent, chrom.second);
 
@@ -401,6 +411,11 @@ int main(int argc, char*argv[]) {
             }
             // Processing the elements, nesting, extending
             mp.process(*icStandard, chrom.second);
+
+            // #pragma omp critical 
+            // {
+            //     std::cout << "Filter " << chromName << std::endl;
+            // }
 
             // Filtering out the LTR RTs that do not meet the structural features of an LTR RT or exhibit high similarity to other repetitive elements
             mp.filter(*icStandard, chrom.second);

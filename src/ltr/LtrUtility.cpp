@@ -264,7 +264,7 @@ static void LtrUtility::removeNests(std::vector<RT*> &rtVec) {
         if (rt->hasRightLTR() && rt->hasNest()) {
             for (auto &nest : rt->getNestSet()) {
                 rt->removeNest(nest);
-                nest->setOuterNest(nullptr);
+                nest->removeOuter(rt);
             }
         }
     }
@@ -293,4 +293,38 @@ static void LtrUtility::renameCaseType(std::vector<RT*> &rtVec, std::string curr
             rt->setCaseType(newName);
         }
     }
+}
+
+static std::string LtrUtility::lcs(std::string &str1, std::string &str2) {
+    int len1 = str1.size();
+    int len2 = str2.size();
+    
+    // Create a matrix to store the lengths of subproblems
+    std::vector<std::vector<int>> dp(len1 + 1, std::vector<int>(len2 + 1));
+    
+    int maxLength = 0; // To store length of the longest common substring
+    int endIndex = 0; // To store the ending index of longest common substring in str1
+
+    // Building the dp matrix
+    for (int i = 1; i <= len1; i++) {
+        for (int j = 1; j <= len2; j++) {
+            // If character at i-th index in str1 is equal to the character at j-th index in str2
+            if (str1[i - 1] == str2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+                
+                // Update the maximum length and ending index
+                if (dp[i][j] > maxLength) {
+                    maxLength = dp[i][j];
+                    endIndex = i - 1;
+                }
+            }
+            // If character at i-th index in str1 is not equal to character at j-th index in str2
+            else {
+                dp[i][j] = 0;
+            }
+        }
+    }
+    
+    // Return the longest common substring
+    return str1.substr(endIndex - maxLength + 1, maxLength);
 }
