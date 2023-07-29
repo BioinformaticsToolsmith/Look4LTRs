@@ -1,6 +1,16 @@
 # Look4LTRs
 Long Terminal Repeat Retrotransposon detection tool capable of finding recently nested LTR RTs de novo.
 
+Copyright (C) 2023 Anthony B. Garza and Hani Z. Girgis, PhD 
+
+Academic use: Affero General Public License version 1.
+
+Any restrictions to use for profit or non-academics: Alternative commercial license is required.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Please contact Dr. Hani Z. Girgis (hzgirgis@buffalo.edu) if you need more information.
+
 The src directory holds the source code.
 The CMakeLists is the cmake file.
 The script directory holds useful scripts for studying the results of Look4LTRs. These scripts were made with Python 3.10.
