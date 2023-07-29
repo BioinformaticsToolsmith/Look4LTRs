@@ -118,6 +118,3 @@ When passing more than one fasta directory through --fasta, --train, or combined
 
 findSameGraphNest.py 
 findRT.py will return the line belonging to an LTR RT from an RTR file given its ID. Use this in conjunction with the above scripts instead of searching by hand.
-
-## License
-Academic use: The software is provided as-is under the GNU GPLv3. Any restrictions to use for-profit or non-academics: License needed.
