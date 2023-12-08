@@ -18,6 +18,7 @@ The script directory holds useful scripts for studying the results of Look4LTRs.
 ## Requirements
 
 GNU g++ 11.1.0
+
 cmake 3.10.3
 
 If you do not have the required g++ and cmake, we suggest creating a conda environment.
@@ -25,8 +26,11 @@ Please follow these steps to install the required g++ and cmake, assuming an env
 You may change the environment name.
 
 conda create -n myenv 
+
 conda activate myenv
+
 conda install -c conda-forge cmake=3.10.3
+
 conda install -c conda-forge gcc=11.1.0
 
 
