@@ -144,13 +144,14 @@ A few steps are required to set up the training of Look4LTRs.
     - b. Each BED file must correspond to exactly one chromosome.
     - c. The name of each BED file must be exactly the same as the corresponding FASTA file's. The only difference should be the extension.
     - d. The BED files must have the following columns:
-      - i. *chrom* is the chromosome identifier
-      - ii. *start* is the start position of the LTR-retrotransposon
-      - iii. *end* is the end position of the LTR-retrotransposon
-      - iv. *left_start* is the start position of the upstream LTR (typically the 5' LTR)
-      - v. *left_end* is the end position of the upstream LTR
-      - vi. *right_start* is the start position of the downstream LTR (typically the 3' LTR)
-      - vii. *right_end* is the end position of the downstream LTR. 
+      - *chrom* is the chromosome identifier
+      - *start* is the start position of the LTR-retrotransposon
+      - *end* is the end position of the LTR-retrotransposon
+      - *left_start* is the start position of the upstream LTR (typically the 5' LTR)
+      - *left_end* is the end position of the upstream LTR
+      - *right_start* is the start position of the downstream LTR (typically the 3' LTR)
+      - *right_end* is the end position of the downstream LTR. 
+    - e. The BED files must include the header line of column names
 
 
 4. **Download Python**. Python 3.8 and higher is recommended. A conda environment can be used.
@@ -170,8 +171,9 @@ The pipeline can be run by calling **trainModel.py** located in the Training fol
 | -bd/--beddirs | Takes multiple arguments. The paths to each genome's BED file directory. Separate each path with a space. | Yes |
 | -o/--output | Output directory. If it doesn't exist, it will be created (assuming the base path exists). WARNING: If it does exist, everything in the folder will be deleted beforehand. | Yes |
 
-An example usage is the following
-    ```bash
+An example usage is the following:
+    ```
     python3 trainModel.py -fd /###/Genome1/Fasta/ /###/Genome2/Fasta/ -bd /###/Genome1/Bed/ /###/Genome2/Bed -o /###/Output/
+    ```
 
 The result of this pipeline is located in the provided output folder in a file called **config.txt**. This file can then be passed to the **look4ltrs** executable with the -c/--config parameter detailed above.
