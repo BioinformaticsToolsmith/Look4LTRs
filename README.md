@@ -128,11 +128,11 @@ We advise caution with retraining Look4LTRs as it may result in unexpected resul
 A few steps are required to set up the training of Look4LTRs.
 
 1. **Compile required executables**. Two executables need to be compiled for the training pipeline to work. Navigate to the bin directory and run the following commands.
-  ```
-  cd bin
-  make generateTrainingData
-  make generateGraphData
-  ```
+    ```
+    cd bin
+    make generateTrainingData
+    make generateGraphData
+    ```
 
 2. **Set up the input genomes**. The training pipeline requires the FASTA files of the genomes to train on.
   - a. Each genome the user wishes to train on must be split into their own directories.
@@ -156,10 +156,10 @@ A few steps are required to set up the training of Look4LTRs.
 4. **Download Python**. Python 3.8 and higher is recommended. A conda environment can be used.
 
 5. **Download the required packages**. In the Training folder, there is a requirements.txt file. Please install the packages within this file for Python.
-  ```
-  cd ../Training
-  pip install -r requirements.txt
-  ```
+    ```
+    cd ../Training
+    pip install -r requirements.txt
+    ```
 
 The pipeline can be run by calling **trainModel.py** located in the Training folder. This script takes the following parameters.
 
