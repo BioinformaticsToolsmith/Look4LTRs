@@ -21,7 +21,7 @@ set(CMAKE_CXX_STANDARD 17)
 # There is a bug if -O3 if used in GCC 11.1.0, so we instead added -O2 with all options from -O3
 set(CMAKE_CXX_FLAGS " -O2 -fgcse-after-reload -fipa-cp-clone -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -ftree-loop-distribution -ftree-partial-pre -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ffast-math  -fopenmp -fmessage-length=0 -fpermissive")
 
-add_library(main SHARED		
+add_library(main STATIC		
 ${CMAKE_SOURCE_DIR}/src/FastaReader.cpp		
 ${CMAKE_SOURCE_DIR}/src/Mutator.cpp			
 ${CMAKE_SOURCE_DIR}/src/ReaderAlignerCoordinator.cpp			
@@ -47,7 +47,7 @@ ${CMAKE_SOURCE_DIR}/src/Serializer.cpp
 ${CMAKE_SOURCE_DIR}/src/GlobAlignE.cpp
 )
 
-add_library(clustering SHARED
+add_library(clustering STATIC
 ${CMAKE_SOURCE_DIR}/src/meshclust/MeShClust.cpp
 ${CMAKE_SOURCE_DIR}/src/meshclust/ClusterInfo.cpp
 ${CMAKE_SOURCE_DIR}/src/meshclust/ClusterEvaluator.cpp
@@ -64,7 +64,7 @@ ${CMAKE_SOURCE_DIR}/src/ltr/DeepNesting.fwd.h
 ${CMAKE_SOURCE_DIR}/src/ltr/ModulePipeline.fwd.h
 )
 
-add_library(ltr SHARED
+add_library(ltr STATIC
 ${CMAKE_SOURCE_DIR}/src/ltr/LtrParameters.cpp
 ${CMAKE_SOURCE_DIR}/src/ltr/Stretch.cpp
 ${CMAKE_SOURCE_DIR}/src/ltr/Merger.cpp
@@ -126,7 +126,7 @@ ${CMAKE_SOURCE_DIR}/src/meshclust/Reservoir.h
 
 
 # RED source code
-add_library(exception SHARED	
+add_library(exception STATIC	
 ${CMAKE_SOURCE_DIR}/src/exception/FileDoesNotExistException.cpp  
 ${CMAKE_SOURCE_DIR}/src/exception/InvalidOperationException.cpp          
 ${CMAKE_SOURCE_DIR}/src/exception/InvalidScoreException.cpp
@@ -135,7 +135,7 @@ ${CMAKE_SOURCE_DIR}/src/exception/InvalidOrderOfOperationsException.cpp
 ${CMAKE_SOURCE_DIR}/src/exception/InvalidStateException.cpp
 )
 
-add_library(utility SHARED
+add_library(utility STATIC
 ${CMAKE_SOURCE_DIR}/src/utility/EmptyLocation.cpp	
 ${CMAKE_SOURCE_DIR}/src/utility/Location.cpp
 ${CMAKE_SOURCE_DIR}/src/utility/Util.cpp	
@@ -149,7 +149,7 @@ ${CMAKE_SOURCE_DIR}/src/nonltr/KmerHashTable.h
 ${CMAKE_SOURCE_DIR}/src/nonltr/IChromosome.h
 )
 
-add_library(nonltr SHARED
+add_library(nonltr STATIC
 ${CMAKE_SOURCE_DIR}/src/nonltr/ChromosomeOneDigit.cpp
 ${CMAKE_SOURCE_DIR}/src/nonltr/HMM.cpp
 ${CMAKE_SOURCE_DIR}/src/nonltr/Scanner.cpp
@@ -165,7 +165,7 @@ ${CMAKE_SOURCE_DIR}/src/nonltr/LocationList.cpp
 ${CMAKE_SOURCE_DIR}/src/nonltr/Trainer.cpp
 )
 
-add_library(repeats SHARED
+add_library(repeats STATIC
 ${CMAKE_SOURCE_DIR}/src/red/Red.cpp
 )
 
@@ -192,8 +192,6 @@ target_link_libraries(makeclusters main)
 add_executable(generateclusters ${CMAKE_SOURCE_DIR}/src/apps/GenerateClusters.cpp ${HEADER_FILES})
 target_link_libraries(generateclusters main)
 
-##add_executable(identityclusteval ${CMAKE_SOURCE_DIR}/src/apps/IdentityClustEval.cpp ${HEADER_FILES})
-##target_link_libraries(identityclusteval main)
 
 add_executable(clusteval ${CMAKE_SOURCE_DIR}/src/apps/ClustEval.cpp ${HEADER_FILES} ${CLUSTER_HEADER_FILES})
 target_link_libraries(clusteval clustering)
@@ -213,8 +211,9 @@ target_link_libraries(ltrdetector main ltr)
 add_executable(look4ltrs ${CMAKE_SOURCE_DIR}/src/ltr/look4ltrs.cpp ${HEADER_FILES} ${LTR_HEADER_FILES})
 target_link_libraries(look4ltrs main ltr repeats exception utility nonltr)
 
-add_executable(look4ltrstest ${CMAKE_SOURCE_DIR}/src/ltr/MainTestDrive.cpp ${HEADER_FILES} ${LTR_HEADER_FILES})
-target_link_libraries(look4ltrstest main ltr repeats exception utility nonltr)
+add_executable(generateTrainingData ${CMAKE_SOURCE_DIR}/src/ltr/generateTrainingData.cpp ${HEADER_FILES} ${LTR_HEADER_FILES})
+target_link_libraries(generateTrainingData main ltr repeats exception utility nonltr)
 
-#add_executable(identitytestcase ${CMAKE_SOURCE_DIR}/src/test/IdentityTestCase.cpp ${HEADER_FILES})
-#target_link_libraries(identitytestcase main)
+add_executable(generateGraphData ${CMAKE_SOURCE_DIR}/src/ltr/generateGraphData.cpp ${HEADER_FILES} ${LTR_HEADER_FILES})
+target_link_libraries(generateGraphData main ltr repeats exception utility nonltr)
+

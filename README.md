@@ -19,21 +19,6 @@ The script directory holds useful scripts for studying the results of Look4LTRs.
 
 GNU g++ 11.1.0
 
-cmake 3.10.3
-
-If you do not have the required g++ and cmake, we suggest creating a conda environment.
-Please follow these steps to install the required g++ and cmake, assuming an environment called "myenv."
-You may change the environment name.
-
-conda create -n myenv 
-
-conda activate myenv
-
-conda install -c conda-forge cmake=3.10.3
-
-conda install -c conda-forge gcc=11.1.0
-
-
 ## How to Compile
 
 ```
@@ -102,8 +87,9 @@ Look4LTRs is activated from the command line. The following table describes the 
 | Parameter | Description | Required? |
 |-----------------|-----------------|-----------------|
 | -f/--fasta | Fasta file directory for training and predicting. If you wish to train multiple genomes, you can pass multiple directories here. | Yes |
-| -o/--output | Output directory. | Yes |
 | -t/--train | Fasta file directory for training only. Can be given a variable number of arguments.
+| -o/--output | Output directory. | Yes |
+| -c/--config | Config file that contains a machine learning model's parameters. Used to replace the model in the detector module and downstream parameters. | No |
 | -p/--parallel | Number of threads to use. If not given, defaults to 1 | No |
 | -h/--help | Prints a help message and stops execution of the program | No |
 
@@ -133,3 +119,59 @@ When passing more than one fasta directory through --fasta, --train, or combined
 
 findSameGraphNest.py 
 findRT.py will return the line belonging to an LTR RT from an RTR file given its ID. Use this in conjunction with the above scripts instead of searching by hand.
+
+## Training
+Look4LTRs is trained on *Arabidopsis thaliana*, *Oryza sativa japonica*, *Glycine max*, and *Sorghum bicolor* using elements delineated by RepeatMasker and Repbase (2018). Non-model organisms may not be well-represented as a result. To accomodate this, the pipeline for training Look4LTRs has been provided.
+
+We advise caution with retraining Look4LTRs as it may result in unexpected results. In Look4LTRs, an SGD classifier (from scikit-learn) was trained on the aforementioned genomes. The SGD classifier itself was chosen after consideration of other models such as linear regressors and random forests. As such, the SGD classifier may not result in the optimal results on non-model genomes.
+
+A few steps are required to set up the training of Look4LTRs.
+
+1. **Compile required executables**. Two executables need to be compiled for the training pipeline to work. Navigate to the bin directory and run the following commands.
+  ```
+  cd bin
+  make generateTrainingData
+  make generateGraphData
+  ```
+
+2. **Set up the input genomes**. The training pipeline requires the FASTA files of the genomes to train on.
+  - a. Each genome the user wishes to train on must be split into their own directories.
+  - b. No multi-fasta format files allowed. Each FASTA file may only have one sequence. Each chromosome should be its own file. This simplifies the mapping of training data to chromosomes.
+  - c. The FASTA files must have the '.fa' extension.
+
+3. **Set up the LTR-retrotransposon locations**. The user must provide the locations of LTR-retrotransposons within their provided genomes in BED format.
+  - a. Just like the genomes' FASTA files, the BED files for the genomes must be split into separate directories.
+  - b. Each BED file must correspond to exactly one chromosome.
+  - c. The name of each BED file must be exactly the same as the corresponding FASTA file's. The only difference should be the extension.
+  - d. The BED files must have the following columns:
+    - i. *chrom* is the chromosome identifier
+    - ii. *start* is the start position of the LTR-retrotransposon
+    - iii. *end* is the end position of the LTR-retrotransposon
+    - iv. *left_start* is the start position of the upstream LTR (typically the 5' LTR)
+    - v. *left_end* is the end position of the upstream LTR
+    - vi. *right_start* is the start position of the downstream LTR (typically the 3' LTR)
+    - vii. *right_end* is the end position of the downstream LTR. 
+
+
+4. **Download Python**. Python 3.8 and higher is recommended. A conda environment can be used.
+
+5. **Download the required packages**. In the Training folder, there is a requirements.txt file. Please install the packages within this file for Python.
+  ```
+  cd ../Training
+  pip install -r requirements.txt
+  ```
+
+The pipeline can be run by calling **trainModel.py** located in the Training folder. This script takes the following parameters.
+
+
+| Parameter | Description | Required? |
+|-----------------|-----------------|-----------------|
+| -fd/--fastadirs | Takes multiple arguments. The paths to each genome's FASTA file directory. Separate each path with a space | Yes |
+| -bd/--beddirs | Takes multiple arguments. The paths to each genome's BED file directory. Separate each path with a space. | Yes |
+| -o/--output | Output directory. If it doesn't exist, it will be created (assuming the base path exists). WARNING: If it does exist, everything in the folder will be deleted beforehand. | Yes |
+
+An example usage is the following
+    ```bash
+    python3 trainModel.py -fd /###/Genome1/Fasta/ /###/Genome2/Fasta/ -bd /###/Genome1/Bed/ /###/Genome2/Bed -o /###/Output/
+
+The result of this pipeline is located in the provided output folder in a file called **config.txt**. This file can then be passed to the **look4ltrs** executable with the -c/--config parameter detailed above.
