@@ -173,8 +173,7 @@ The pipeline can be run by calling **trainModel.py** located in the Training fol
 
 An example usage is the following:
 
-    ```
     python3 trainModel.py -fd /###/Genome1/Fasta/ /###/Genome2/Fasta/ -bd /###/Genome1/Bed/ /###/Genome2/Bed -o /###/Output/
-    ```
+    
 
 The result of this pipeline is located in the provided output folder in a file called **config.txt**. This file can then be passed to the **look4ltrs** executable with the -c/--config parameter detailed above.
