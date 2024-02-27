@@ -140,17 +140,17 @@ A few steps are required to set up the training of Look4LTRs.
   - c. The FASTA files must have the '.fa' extension.
 
 3. **Set up the LTR-retrotransposon locations**. The user must provide the locations of LTR-retrotransposons within their provided genomes in BED format.
-  - a. Just like the genomes' FASTA files, the BED files for the genomes must be split into separate directories.
-  - b. Each BED file must correspond to exactly one chromosome.
-  - c. The name of each BED file must be exactly the same as the corresponding FASTA file's. The only difference should be the extension.
-  - d. The BED files must have the following columns:
-    - i. *chrom* is the chromosome identifier
-    - ii. *start* is the start position of the LTR-retrotransposon
-    - iii. *end* is the end position of the LTR-retrotransposon
-    - iv. *left_start* is the start position of the upstream LTR (typically the 5' LTR)
-    - v. *left_end* is the end position of the upstream LTR
-    - vi. *right_start* is the start position of the downstream LTR (typically the 3' LTR)
-    - vii. *right_end* is the end position of the downstream LTR. 
+    - a. Just like the genomes' FASTA files, the BED files for the genomes must be split into separate directories.
+    - b. Each BED file must correspond to exactly one chromosome.
+    - c. The name of each BED file must be exactly the same as the corresponding FASTA file's. The only difference should be the extension.
+    - d. The BED files must have the following columns:
+      - i. *chrom* is the chromosome identifier
+      - ii. *start* is the start position of the LTR-retrotransposon
+      - iii. *end* is the end position of the LTR-retrotransposon
+      - iv. *left_start* is the start position of the upstream LTR (typically the 5' LTR)
+      - v. *left_end* is the end position of the upstream LTR
+      - vi. *right_start* is the start position of the downstream LTR (typically the 3' LTR)
+      - vii. *right_end* is the end position of the downstream LTR. 
 
 
 4. **Download Python**. Python 3.8 and higher is recommended. A conda environment can be used.
