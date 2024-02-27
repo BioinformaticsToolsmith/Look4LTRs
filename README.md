@@ -135,9 +135,9 @@ A few steps are required to set up the training of Look4LTRs.
     ```
 
 2. **Set up the input genomes**. The training pipeline requires the FASTA files of the genomes to train on.
-  - a. Each genome the user wishes to train on must be split into their own directories.
-  - b. No multi-fasta format files allowed. Each FASTA file may only have one sequence. Each chromosome should be its own file. This simplifies the mapping of training data to chromosomes.
-  - c. The FASTA files must have the '.fa' extension.
+    - a. Each genome the user wishes to train on must be split into their own directories.
+    - b. No multi-fasta format files allowed. Each FASTA file may only have one sequence. Each chromosome should be its own file. This simplifies the mapping of training data to chromosomes.
+    - c. The FASTA files must have the '.fa' extension.
 
 3. **Set up the LTR-retrotransposon locations**. The user must provide the locations of LTR-retrotransposons within their provided genomes in BED format.
     - a. Just like the genomes' FASTA files, the BED files for the genomes must be split into separate directories.
