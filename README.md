@@ -172,6 +172,7 @@ The pipeline can be run by calling **trainModel.py** located in the Training fol
 | -o/--output | Output directory. If it doesn't exist, it will be created (assuming the base path exists). WARNING: If it does exist, everything in the folder will be deleted beforehand. | Yes |
 
 An example usage is the following:
+
     ```
     python3 trainModel.py -fd /###/Genome1/Fasta/ /###/Genome2/Fasta/ -bd /###/Genome1/Bed/ /###/Genome2/Bed -o /###/Output/
     ```
