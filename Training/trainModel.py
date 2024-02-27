@@ -9,9 +9,9 @@ import graphStatistics as gs
 parser = argparse.ArgumentParser(description='Train Look4LTRs detector')
 parser.add_argument('-fd', '--fastadirs', nargs='+', required=True, help='FASTA file directories containing sequences to be used for training. Each directory should be its own genome.')
 parser.add_argument('-bd', '--beddirs', nargs='+', required=True, help='BED file directories containing annotations to be used for training. Each directory should be its own genome. Should correspond to the FASTA file directories.')
-parser.add_argument('-o', '--output', required=True, help='Output directory for all generated training data and model. Will be created if it does not exist.')
-parser.add_argument('-ge', '--genexe', required=True, help='Path to the generateTrainingData executable')
-parser.add_argument('-gg', '--gengraph', required=True, help='Path to the generateGraphData executable')
+parser.add_argument('-o', '--output', required=True, help='Output directory for all generated training data and model. Will be created if it does not exist. WARNING: will delete everything inside if it does exist before proceding.')
+parser.add_argument('-ge', '--genexe', help='Not Required: Path to the generateTrainingData executable')
+parser.add_argument('-gg', '--gengraph', help='Not Required: Path to the generateGraphData executable')
 
 #@#@#@#@#@#@#@#@#@#@#@#@#@#@
 # Get arguments and validate
@@ -21,8 +21,8 @@ args = parser.parse_args()
 fasta_dirs = args.fastadirs
 bed_dirs = args.beddirs
 output_dir = args.output
-genexe_path = args.genexe
-gengraph_path = args.gengraph
+genexe_path = args.genexe if args.genexe else "../bin/generateTrainingData"
+gengraph_path = args.gengraph if args.gengraph else "../bin/generateGraphData"
 
 assert len(fasta_dirs) == len(bed_dirs), "Number of FASTA directories does not match number of BED directories"
 assert os.path.exists(genexe_path), "Path to generateTrainingData executable does not exist"
